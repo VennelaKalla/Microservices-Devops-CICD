@@ -1,0 +1,32 @@
+services:
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    expose:
+      - "3001"
+    restart: always
+
+  product-service:
+    build: ./product-service
+    container_name: product-service
+    expose:
+      - "3002"
+    restart: always
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    expose:
+      - "3003"
+    restart: always
+
+  nginx:
+    build: ./nginx
+    container_name: nginx-proxy
+    ports:
+      - "8081:80"
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+    restart: always
