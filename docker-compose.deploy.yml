@@ -1,0 +1,33 @@
+
+services:
+  user-service:
+    image: 200377817725.dkr.ecr.us-east-1.amazonaws.com/microservices-devops/user-service:latest
+    container_name: user-service
+    expose:
+      - "3001"
+    restart: always
+
+  product-service:
+    image: 200377817725.dkr.ecr.us-east-1.amazonaws.com/microservices-devops/product-service:latest
+    container_name: product-service
+    expose:
+      - "3002"
+    restart: always
+
+  order-service:
+    image: 200377817725.dkr.ecr.us-east-1.amazonaws.com/microservices-devops/order-service:latest
+    container_name: order-service
+    expose:
+      - "3003"
+    restart: always
+
+  nginx:
+    build: ./nginx
+    container_name: nginx-proxy
+    ports:
+      - "8081:80"
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+    restart: always
