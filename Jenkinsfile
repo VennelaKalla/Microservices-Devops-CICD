@@ -48,6 +48,7 @@ pipeline {
         }
 
 
+       
         stage('Deploy to EC2') {
             steps {
                 sh '''
@@ -59,10 +60,12 @@ pipeline {
                     aws ecr get-login-password --region $AWS_REGION | \
                     docker login --username AWS --password-stdin $ECR_REGISTRY
 
-                    docker compose -f docker-compose.deploy.yml pull \
+                    docker compose -p microservices-devops-cicd \
+                      -f docker-compose.deploy.yml pull \
                       user-service product-service order-service
 
-                    docker compose -f docker-compose.deploy.yml up -d --build
+                    docker compose -p microservices-devops-cicd \
+                      -f docker-compose.deploy.yml up -d --build
                 '''
             }
         }
