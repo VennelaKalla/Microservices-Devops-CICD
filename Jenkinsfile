@@ -47,6 +47,26 @@ pipeline {
             }
         }
 
+
+        stage('Deploy to EC2') {
+            steps {
+                sh '''
+                    set -e
+
+                    unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN AWS_PROFILE
+                    export AWS_SHARED_CREDENTIALS_FILE=/dev/null
+
+                    aws ecr get-login-password --region $AWS_REGION | \
+                    docker login --username AWS --password-stdin $ECR_REGISTRY
+
+                    docker compose -f docker-compose.deploy.yml pull \
+                      user-service product-service order-service
+
+                    docker compose -f docker-compose.deploy.yml up -d --build
+                '''
+            }
+        }
+        
         stage('Push Images to ECR') {
             steps {
                 sh '''
